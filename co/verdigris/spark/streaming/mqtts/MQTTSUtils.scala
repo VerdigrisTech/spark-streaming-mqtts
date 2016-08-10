@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package co.verdigris.spark.streaming.awsiot
+package co.verdigris.spark.streaming.mqtts
 
 import java.security.cert.X509Certificate
 
