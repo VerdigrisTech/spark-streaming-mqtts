@@ -17,13 +17,11 @@
 
 package co.verdigris.spark.streaming.mqtts
 
-import java.security.KeyPair
-import java.security.cert.X509Certificate
+import java.security.{KeyStore, PrivateKey}
+import java.security.cert.{Certificate, X509Certificate}
+import javax.net.ssl.{KeyManagerFactory, SSLContext, TrustManagerFactory}
 
-import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken
-import org.eclipse.paho.client.mqttv3.MqttCallback
-import org.eclipse.paho.client.mqttv3.MqttClient
-import org.eclipse.paho.client.mqttv3.MqttMessage
+import org.eclipse.paho.client.mqttv3._
 import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence
 import org.apache.spark.storage.StorageLevel
 import org.apache.spark.streaming.StreamingContext
@@ -48,7 +46,7 @@ class MQTTSInputDStream(
     topic: String,
     caCert: X509Certificate,
     cert: X509Certificate,
-    privateKey: KeyPair,
+    privateKey: PrivateKey,
     storageLevel: StorageLevel
   ) extends ReceiverInputDStream[String](ssc_) {
 
@@ -65,7 +63,7 @@ class MQTTSReceiver(
     topic: String,
     caCert: X509Certificate,
     cert: X509Certificate,
-    privateKey: KeyPair,
+    privateKey: PrivateKey,
     storageLevel: StorageLevel
   ) extends Receiver[String](storageLevel) {
 
@@ -81,12 +79,40 @@ class MQTTSReceiver(
     // Initializing Mqtt Client specifying brokerUrl, clientID and MqttClientPersistance
     val client = new MqttClient(brokerUrl, MqttClient.generateClientId(), persistence)
 
+    // Set connection options for the Mqtt Client
+    val mqttConnectionOptions = new MqttConnectOptions()
+
+    // Store CA certificate in JKS
+    val caKeyStore = KeyStore.getInstance(KeyStore.getDefaultType)
+    caKeyStore.load(null, null)
+    caKeyStore.setCertificateEntry("ca-certificate", caCert)
+
+    // Establish certificate trust chain
+    val tmf = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm)
+    tmf.init(caKeyStore)
+
+    // Deal with client key and certificates
+    val clientKeyStore = KeyStore.getInstance(KeyStore.getDefaultType)
+    clientKeyStore.load(null, null)
+    clientKeyStore.setCertificateEntry("certificate", cert)
+    clientKeyStore.setKeyEntry("private-key", privateKey, new Array[Char](0), Array(cert))
+
+    val kmf = KeyManagerFactory.getInstance(KeyManagerFactory.getDefaultAlgorithm)
+    kmf.init(clientKeyStore, new Array[Char](0))
+
+    // Set up client certificate for connection over TLS
+    val sslContext = SSLContext.getInstance("TLSv1.2")
+    sslContext.init(kmf.getKeyManagers, tmf.getTrustManagers, null)
+
+    // Tell MQTT Options that we're using socket over TLS
+    mqttConnectionOptions.setSocketFactory(sslContext.getSocketFactory)
+
     // Callback automatically triggers as and when new message arrives on specified topic
     val callback = new MqttCallback() {
 
       // Handles Mqtt message
       override def messageArrived(topic: String, message: MqttMessage) {
-        store(new String(message.getPayload(), "utf-8"))
+        store(new String(message.getPayload, "utf-8"))
       }
 
       override def deliveryComplete(token: IMqttDeliveryToken) {
@@ -102,7 +128,7 @@ class MQTTSReceiver(
     client.setCallback(callback)
 
     // Connect to MqttBroker
-    client.connect()
+    client.connect(mqttConnectionOptions)
 
     // Subscribe to Mqtt topic
     client.subscribe(topic)
