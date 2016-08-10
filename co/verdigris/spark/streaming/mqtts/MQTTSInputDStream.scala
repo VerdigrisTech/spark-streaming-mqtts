@@ -29,13 +29,15 @@ import org.apache.spark.storage.StorageLevel
 import org.apache.spark.streaming.StreamingContext
 import org.apache.spark.streaming.dstream._
 import org.apache.spark.streaming.receiver.Receiver
-import sun.security.ssl.KeyManagerFactoryImpl.X509
 
 /**
  * Input stream that subscribe messages from a Mqtt Broker.
  * Uses eclipse paho as MqttClient http://www.eclipse.org/paho/
  * @param brokerUrl Url of remote mqtt publisher
  * @param topic topic name to subscribe to
+ * @param caCert       Certificate of Certificate Authority of remote MQTT publisher
+ * @param cert         Client certificate associated with the MQTT client
+ * @param privateKey:  Private key associated with the MQTT client
  * @param storageLevel RDD storage level.
  */
 
@@ -58,9 +60,12 @@ class MQTTSInputDStream(
 }
 
 private[streaming]
-class MQTTReceiver(
+class MQTTSReceiver(
     brokerUrl: String,
     topic: String,
+    caCert: X509Certificate,
+    cert: X509Certificate,
+    privateKey: KeyPair,
     storageLevel: StorageLevel
   ) extends Receiver[String](storageLevel) {
 
