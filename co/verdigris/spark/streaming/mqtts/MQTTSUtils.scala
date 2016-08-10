@@ -17,6 +17,7 @@
 
 package co.verdigris.spark.streaming.mqtts
 
+import java.security.KeyPair
 import java.security.cert.X509Certificate
 
 import scala.reflect.ClassTag
@@ -75,6 +76,17 @@ object MQTTUtils {
     createStream(jssc.ssc, brokerUrl, topic, storageLevel)
   }
 
+  /**
+    * Create an input stream that receives messages pushed by a MQTT publisher.
+    * @param jssc         JavaStreamingContext object
+    * @param brokerUrl    Url of remote MQTT publisher
+    * @param topic        Topic name to subscribe to
+    * @param clientId     Unique identifier for MQTT client
+    * @param caCert       Certificate of Certificate Authority of remote MQTT publisher
+    * @param cert         Client certificate associated with the MQTT client
+    * @param privateKey:  Private key associated with the MQTT client
+    * @param storageLevel RDD storage level.
+    */
   def createStream(
       ssc: StreamingContext,
       brokerUrl: String,
@@ -85,7 +97,7 @@ object MQTTUtils {
       privateKey: KeyPair,
       storageLevel: StorageLevel = StorageLevel.MEMORY_AND_DISK_SER_2
   ): ReceiverInputDStream[String] = {
-
+    new MQTTInputDStream(ssc, brokerUrl, topic, clientId, caCert, cert, privateKey, storageLevel)
   }
 }
 
