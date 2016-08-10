@@ -25,63 +25,14 @@ import org.apache.spark.storage.StorageLevel
 import org.apache.spark.streaming.StreamingContext
 import org.apache.spark.streaming.api.java.{JavaDStream, JavaReceiverInputDStream, JavaStreamingContext}
 import org.apache.spark.streaming.dstream.ReceiverInputDStream
+import org.apache.spark.streaming.mqtt.MQTTUtils
 
-object MQTTUtils {
-  /**
-   * Create an input stream that receives messages pushed by a MQTT publisher.
-   * @param ssc           StreamingContext object
-   * @param brokerUrl     Url of remote MQTT publisher
-   * @param topic         Topic name to subscribe to
-   * @param storageLevel  RDD storage level. Defaults to StorageLevel.MEMORY_AND_DISK_SER_2.
-   */
-  def createStream(
-      ssc: StreamingContext,
-      brokerUrl: String,
-      topic: String,
-      storageLevel: StorageLevel = StorageLevel.MEMORY_AND_DISK_SER_2
-    ): ReceiverInputDStream[String] = {
-    new MQTTInputDStream(ssc, brokerUrl, topic, storageLevel)
-  }
-
-  /**
-   * Create an input stream that receives messages pushed by a MQTT publisher.
-   * Storage level of the data will be the default StorageLevel.MEMORY_AND_DISK_SER_2.
-   * @param jssc      JavaStreamingContext object
-   * @param brokerUrl Url of remote MQTT publisher
-   * @param topic     Topic name to subscribe to
-   */
-  def createStream(
-      jssc: JavaStreamingContext,
-      brokerUrl: String,
-      topic: String
-    ): JavaReceiverInputDStream[String] = {
-    implicitly[ClassTag[AnyRef]].asInstanceOf[ClassTag[String]]
-    createStream(jssc.ssc, brokerUrl, topic)
-  }
-
-  /**
-   * Create an input stream that receives messages pushed by a MQTT publisher.
-   * @param jssc      JavaStreamingContext object
-   * @param brokerUrl     Url of remote MQTT publisher
-   * @param topic         Topic name to subscribe to
-   * @param storageLevel  RDD storage level.
-   */
-  def createStream(
-      jssc: JavaStreamingContext,
-      brokerUrl: String,
-      topic: String,
-      storageLevel: StorageLevel
-    ): JavaReceiverInputDStream[String] = {
-    implicitly[ClassTag[AnyRef]].asInstanceOf[ClassTag[String]]
-    createStream(jssc.ssc, brokerUrl, topic, storageLevel)
-  }
-
+object MQTTSUtils extends MQTTUtils {
   /**
     * Create an input stream that receives messages pushed by a MQTT publisher.
-    * @param jssc         JavaStreamingContext object
+    * @param ssc          StreamingContext object
     * @param brokerUrl    Url of remote MQTT publisher
     * @param topic        Topic name to subscribe to
-    * @param clientId     Unique identifier for MQTT client
     * @param caCert       Certificate of Certificate Authority of remote MQTT publisher
     * @param cert         Client certificate associated with the MQTT client
     * @param privateKey:  Private key associated with the MQTT client
@@ -91,13 +42,56 @@ object MQTTUtils {
       ssc: StreamingContext,
       brokerUrl: String,
       topic: String,
-      clientId: String = null,
       caCert: X509Certificate,
       cert: X509Certificate,
       privateKey: KeyPair,
       storageLevel: StorageLevel = StorageLevel.MEMORY_AND_DISK_SER_2
-  ): ReceiverInputDStream[String] = {
+    ): ReceiverInputDStream[String] = {
     new MQTTInputDStream(ssc, brokerUrl, topic, clientId, caCert, cert, privateKey, storageLevel)
+  }
+
+  /**
+    * Create an input stream that receives messages pushed by a MQTT publisher.
+    * @param jssc         JavaStreamingContext object
+    * @param brokerUrl    Url of remote MQTT publisher
+    * @param topic        Topic name to subscribe to
+    * @param caCert       Certificate of Certificate Authority of remote MQTT publisher
+    * @param cert         Client certificate associated with the MQTT client
+    * @param privateKey:  Private key associated with the MQTT client
+    */
+  def createStream(
+      jssc: JavaStreamingContext,
+      brokerUrl: String,
+      topic: String,
+      caCert: X509Certificate,
+      cert: X509Certificate,
+      privateKey: KeyPair
+    ): JavaReceiverInputDStream[String] = {
+    implicitly[ClassTag[AnyRef]].asInstanceOf[ClassTag[String]]
+    createStream(jssc.ssc, brokerUrl, topic, caCert, cert, privateKey)
+  }
+
+  /**
+    * Create an input stream that receives messages pushed by a MQTT publisher.
+    * @param jssc         JavaStreamingContext object
+    * @param brokerUrl    Url of remote MQTT publisher
+    * @param topic        Topic name to subscribe to
+    * @param caCert       Certificate of Certificate Authority of remote MQTT publisher
+    * @param cert         Client certificate associated with the MQTT client
+    * @param privateKey:  Private key associated with the MQTT client
+    * @param storageLevel RDD storage level.
+    */
+  def createStream(
+      jssc: JavaStreamingContext,
+      brokerUrl: String,
+      topic: String,
+      caCert: X509Certificate,
+      cert: X509Certificate,
+      privateKey: KeyPair,
+      storageLevel: StorageLevel
+    ): JavaReceiverInputDStream[String] = {
+    implicitly[ClassTag[AnyRef]].asInstanceOf[ClassTag[String]]
+    createStream(jssc.ssc, brokerUrl, topic, caCert, cert, privateKey, storageLevel)
   }
 }
 
@@ -105,14 +99,17 @@ object MQTTUtils {
  * This is a helper class that wraps the methods in MQTTUtils into more Python-friendly class and
  * function so that it can be easily instantiated and called from Python's MQTTUtils.
  */
-private[mqtt] class MQTTUtilsPythonHelper {
+private[mqtt] class MQTTSUtilsPythonHelper {
 
   def createStream(
       jssc: JavaStreamingContext,
       brokerUrl: String,
       topic: String,
+      caCert: X509Certificate,
+      cert: X509Certificate,
+      privateKey: KeyPair,
       storageLevel: StorageLevel
     ): JavaDStream[String] = {
-    MQTTUtils.createStream(jssc, brokerUrl, topic, storageLevel)
+    MQTTUtils.createStream(jssc, brokerUrl, topic, caCert, cert, privateKey, storageLevel)
   }
 }
