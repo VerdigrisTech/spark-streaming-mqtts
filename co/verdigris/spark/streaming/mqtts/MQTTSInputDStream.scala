@@ -17,16 +17,19 @@
 
 package co.verdigris.spark.streaming.mqtts
 
+import java.security.KeyPair
+import java.security.cert.X509Certificate
+
 import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken
 import org.eclipse.paho.client.mqttv3.MqttCallback
 import org.eclipse.paho.client.mqttv3.MqttClient
 import org.eclipse.paho.client.mqttv3.MqttMessage
 import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence
-
 import org.apache.spark.storage.StorageLevel
 import org.apache.spark.streaming.StreamingContext
 import org.apache.spark.streaming.dstream._
 import org.apache.spark.streaming.receiver.Receiver
+import sun.security.ssl.KeyManagerFactoryImpl.X509
 
 /**
  * Input stream that subscribe messages from a Mqtt Broker.
@@ -37,17 +40,20 @@ import org.apache.spark.streaming.receiver.Receiver
  */
 
 private[streaming]
-class MQTTInputDStream(
+class MQTTSInputDStream(
     ssc_ : StreamingContext,
     brokerUrl: String,
     topic: String,
+    caCert: X509Certificate,
+    cert: X509Certificate,
+    privateKey: KeyPair,
     storageLevel: StorageLevel
   ) extends ReceiverInputDStream[String](ssc_) {
 
-  private[streaming] override def name: String = s"MQTT stream [$id]"
+  private[streaming] override def name: String = s"MQTTS stream [$id]"
 
   def getReceiver(): Receiver[String] = {
-    new MQTTReceiver(brokerUrl, topic, storageLevel)
+    new MQTTSReceiver(brokerUrl, topic, caCert, cert, privateKey, storageLevel)
   }
 }
 
