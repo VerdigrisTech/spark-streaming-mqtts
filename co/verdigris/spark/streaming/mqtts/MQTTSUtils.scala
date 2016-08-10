@@ -47,7 +47,7 @@ object MQTTSUtils extends MQTTUtils {
       privateKey: KeyPair,
       storageLevel: StorageLevel = StorageLevel.MEMORY_AND_DISK_SER_2
     ): ReceiverInputDStream[String] = {
-    new MQTTInputDStream(ssc, brokerUrl, topic, clientId, caCert, cert, privateKey, storageLevel)
+    new MQTTSInputDStream(ssc, brokerUrl, topic, caCert, cert, privateKey, storageLevel)
   }
 
   /**
@@ -110,6 +110,6 @@ private[mqtt] class MQTTSUtilsPythonHelper {
       privateKey: KeyPair,
       storageLevel: StorageLevel
     ): JavaDStream[String] = {
-    MQTTUtils.createStream(jssc, brokerUrl, topic, caCert, cert, privateKey, storageLevel)
+    MQTTSUtils.createStream(jssc, brokerUrl, topic, caCert, cert, privateKey, storageLevel)
   }
 }
