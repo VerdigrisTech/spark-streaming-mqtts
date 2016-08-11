@@ -17,7 +17,7 @@
 
 package co.verdigris.spark.streaming.mqtts
 
-import java.security.KeyPair
+import java.security.PrivateKey
 import java.security.cert.X509Certificate
 
 import scala.reflect.ClassTag
@@ -38,13 +38,13 @@ object MQTTSUtils extends MQTTUtils {
     * @param privateKey:  Private key associated with the MQTT client
     * @param storageLevel RDD storage level.
     */
-  def createStream(
+  def createStream(2
       ssc: StreamingContext,
       brokerUrl: String,
       topic: String,
       caCert: X509Certificate,
       cert: X509Certificate,
-      privateKey: KeyPair,
+      privateKey: PrivateKey,
       storageLevel: StorageLevel = StorageLevel.MEMORY_AND_DISK_SER_2
     ): ReceiverInputDStream[String] = {
     new MQTTSInputDStream(ssc, brokerUrl, topic, caCert, cert, privateKey, storageLevel)
@@ -65,7 +65,7 @@ object MQTTSUtils extends MQTTUtils {
       topic: String,
       caCert: X509Certificate,
       cert: X509Certificate,
-      privateKey: KeyPair
+      privateKey: PrivateKey
     ): JavaReceiverInputDStream[String] = {
     implicitly[ClassTag[AnyRef]].asInstanceOf[ClassTag[String]]
     createStream(jssc.ssc, brokerUrl, topic, caCert, cert, privateKey)
@@ -87,7 +87,7 @@ object MQTTSUtils extends MQTTUtils {
       topic: String,
       caCert: X509Certificate,
       cert: X509Certificate,
-      privateKey: KeyPair,
+      privateKey: PrivateKey,
       storageLevel: StorageLevel
     ): JavaReceiverInputDStream[String] = {
     implicitly[ClassTag[AnyRef]].asInstanceOf[ClassTag[String]]
@@ -107,7 +107,7 @@ private[mqtt] class MQTTSUtilsPythonHelper {
       topic: String,
       caCert: X509Certificate,
       cert: X509Certificate,
-      privateKey: KeyPair,
+      privateKey: PrivateKey,
       storageLevel: StorageLevel
     ): JavaDStream[String] = {
     MQTTSUtils.createStream(jssc, brokerUrl, topic, caCert, cert, privateKey, storageLevel)
