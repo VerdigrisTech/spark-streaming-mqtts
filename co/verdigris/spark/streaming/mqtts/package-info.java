@@ -16,6 +16,6 @@
  */
 
 /**
- * MQTT receiver for Spark Streaming.
+ * MQTTS receiver for Spark Streaming.
  */
-package org.apache.spark.streaming.mqtt;
+package co.verdigris.spark.streaming.mqtts;

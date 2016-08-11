@@ -15,9 +15,9 @@
  * limitations under the License.
  */
 
-package org.apache.spark.streaming
+package co.verdigris.spark.streaming
 
 /**
- * MQTT receiver for Spark Streaming.
+ * MQTTS receiver for Spark Streaming.
  */
-package object mqtt
+package object mqtts
