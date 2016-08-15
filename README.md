@@ -7,7 +7,7 @@ package.
 ## Prerequisites
 
 * Scala 2.10+
-* sbt 0.13+
+* sbt 0.13+ (if building from source)
 
 ## Dependencies
 
@@ -16,6 +16,7 @@ package.
 
 ## Usage
 
+### Submitting standalone Spark Streaming jobs
 You can include this package into your standalone Spark Streaming package as a fat JAR or
 provide it using the `--jars` option for Spark CLI tools (e.g. `spark-submit`).
 
@@ -29,3 +30,17 @@ spec-pkcs1-0.1.0.jar,\
 org.eclipse.paho.mqttv3.jar \
 YOUR-STANDALONE-SPARK-APP.jar
 ```
+
+## Building
+
+Before you begin, you will need SBT version 0.13 or higher to build this project.
+
+To manually build this package from source, just run:
+
+```bash
+$ sbt package
+```
+
+## License
+
+Distributed under [Apache 2.0 license](http://www.apache.org/licenses/LICENSE-2.0).
