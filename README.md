@@ -1,4 +1,4 @@
-# spark-streaming-mqtts
+# spark-streaming-mqtts [![License](https://img.shields.io/badge/license-Apache%202.0-blue.svg)](https://github.com/VerdigrisTech/spec-pkcs1/blob/master/LICENSE.md)
 
 This module adds client side SSL certificate and TLS v1.2 support to the
 `MQTTUtils` class provided by [spark-streaming-mqtt](https://spark.apache.org/docs/1.6.2/api/java/org/apache/spark/streaming/mqtt/package-summary.html)
