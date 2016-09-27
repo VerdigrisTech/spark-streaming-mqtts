@@ -29,7 +29,7 @@ import org.eclipse.paho.client.mqttv3._
 import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence
 
 private[streaming]
-class MQTTSInputDStream[A](
+class MQTTSInputDStream(
                        ssc : StreamingContext,
                        brokerUrl: String,
                        topic: String,
@@ -37,21 +37,21 @@ class MQTTSInputDStream[A](
                        cert: X509Certificate,
                        privateKey: PrivateKey,
                        storageLevel: StorageLevel
-                       ) extends ReceiverInputDStream[A](ssc) {
-  def getReceiver(): Receiver[A] = {
-    new MQTTSReceiver[A](brokerUrl, topic, caCert, cert, privateKey, storageLevel)
+                       ) extends ReceiverInputDStream[String](ssc) {
+  def getReceiver(): Receiver[String] = {
+    new MQTTSReceiver(brokerUrl, topic, caCert, cert, privateKey, storageLevel)
   }
 }
 
 private[streaming]
-class MQTTSReceiver[A](
+class MQTTSReceiver(
                    brokerUrl: String,
                    topic: String,
                    caCert: X509Certificate,
                    cert: X509Certificate,
                    privateKey: PrivateKey,
                    storageLevel: StorageLevel
-                   ) extends Receiver[A](storageLevel) {
+                   ) extends Receiver[String](storageLevel) {
   def onStart(): Unit = {
     // Set up persistence for messages
     val persistence = new MemoryPersistence()
@@ -92,7 +92,7 @@ class MQTTSReceiver[A](
 
       // Handles Mqtt message
       override def messageArrived(topic: String, message: MqttMessage) {
-        store(new A(message.getPayload, "utf-8"))
+        store(new String(message.getPayload, "utf-8"))
       }
 
       override def deliveryComplete(token: IMqttDeliveryToken) {

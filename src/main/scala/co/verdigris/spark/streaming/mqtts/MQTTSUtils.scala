@@ -127,6 +127,8 @@ object MQTTSUtils {
                     storageLevel: StorageLevel
                   ): ReceiverInputDStream[String] = {
     implicitly[ClassTag[AnyRef]].asInstanceOf[ClassTag[String]]
+    val cf = CertificateFactory.getInstance("X.509")
+
     val _caCert = stringToX509Certificate(caCert)
     val _cert = stringToX509Certificate(cert)
     val _privateKey = stringToPrivateKey(privateKey)
@@ -154,34 +156,7 @@ object MQTTSUtils {
                     privateKey: PrivateKey,
                     storageLevel: StorageLevel = StorageLevel.MEMORY_AND_DISK_SER_2
                   ): ReceiverInputDStream[String] = {
-    new MQTTSInputDStream[String](ssc, brokerUrl, topic, caCert, cert, privateKey, storageLevel)
-  }
-
-  def createBinaryStream(
-                          ssc: StreamingContext,
-                          brokerUrl: String,
-                          topic: String,
-                          caCert: String,
-                          cert: String,
-                          privateKey: String
-                        ): ReceiverInputDStream[Array[Byte]] = {
-    val _caCert = stringToX509Certificate(caCert)
-    val _cert = stringToX509Certificate(cert)
-    val _privateKey = stringToPrivateKey(privateKey)
-
-    createBinaryStream(ssc, brokerUrl, topic, _caCert, _cert, _privateKey)
-  }
-
-  def createBinaryStream(
-                          ssc: StreamingContext,
-                          brokerUrl: String,
-                          topic: String,
-                          caCert: X509Certificate,
-                          cert: X509Certificate,
-                          privateKey: PrivateKey,
-                          storageLevel: StorageLevel = StorageLevel.MEMORY_AND_DISK_SER_2
-                        ): ReceiverInputDStream[Array[Byte]] = {
-    new MQTTSInputDStream[Array[Byte]](ssc, brokerUrl, topic, caCert, cert, privateKey, storageLevel)
+    new MQTTSInputDStream(ssc, brokerUrl, topic, caCert, cert, privateKey, storageLevel)
   }
 
   private def stringToX509Certificate(cert: String): X509Certificate = {
