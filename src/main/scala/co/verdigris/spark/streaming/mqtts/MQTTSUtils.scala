@@ -43,6 +43,52 @@ object MQTTSUtils {
     * @param privateKey :  Private key associated with the MQTT client
     */
   def createBinaryStream(
+                          jssc: JavaStreamingContext,
+                          brokerUrl: String,
+                          topic: String,
+                          caCert: String,
+                          cert: String,
+                          privateKey: String
+                        ): JavaReceiverInputDStream[Array[Byte]] = {
+    implicitly[ClassTag[AnyRef]].asInstanceOf[ClassTag[Array[Byte]]]
+    createBinaryStream(jssc.ssc, brokerUrl, topic, caCert, cert, privateKey)
+  }
+
+  /**
+    * Create an input stream that receives binary messages pushed by a MQTT publisher.
+    *
+    * @param jssc         JavaStreamingContext object
+    * @param brokerUrl    Url of remote MQTT publisher
+    * @param topic        Topic name to subscribe to
+    * @param caCert       Certificate of Certificate Authority of remote MQTT publisher
+    * @param cert         Client certificate associated with the MQTT client
+    * @param privateKey   Private key associated with the MQTT client
+    * @param storageLevel RDD storage level.
+    */
+  def createBinaryStream(
+                          jssc: JavaStreamingContext,
+                          brokerUrl: String,
+                          topic: String,
+                          caCert: String,
+                          cert: String,
+                          privateKey: String,
+                          storageLevel: StorageLevel
+                        ): JavaReceiverInputDStream[Array[Byte]] = {
+    implicitly[ClassTag[AnyRef]].asInstanceOf[ClassTag[Array[Byte]]]
+    createBinaryStream(jssc.ssc, brokerUrl, topic, caCert, cert, privateKey, storageLevel)
+  }
+
+  /**
+    * Create an input stream that receives binary messages pushed by a MQTT publisher.
+    *
+    * @param jssc       JavaStreamingContext object
+    * @param brokerUrl  Url of remote MQTT publisher
+    * @param topic      Topic name to subscribe to
+    * @param caCert     Certificate of Certificate Authority of remote MQTT publisher
+    * @param cert       Client certificate associated with the MQTT client
+    * @param privateKey :  Private key associated with the MQTT client
+    */
+  def createBinaryStream(
                     jssc: JavaStreamingContext,
                     brokerUrl: String,
                     topic: String,
@@ -153,6 +199,52 @@ object MQTTSUtils {
                     storageLevel: StorageLevel = StorageLevel.MEMORY_AND_DISK_SER_2
                   ): ReceiverInputDStream[Array[Byte]] = {
     new MQTTSBinaryInputDStream(ssc, brokerUrl, topic, caCert, cert, privateKey, storageLevel)
+  }
+
+  /**
+    * Create an input stream that receives messages pushed by a MQTT publisher.
+    *
+    * @param jssc       JavaStreamingContext object
+    * @param brokerUrl  Url of remote MQTT publisher
+    * @param topic      Topic name to subscribe to
+    * @param caCert     Certificate of Certificate Authority of remote MQTT publisher
+    * @param cert       Client certificate associated with the MQTT client
+    * @param privateKey :  Private key associated with the MQTT client
+    */
+  def createStream(
+                    jssc: JavaStreamingContext,
+                    brokerUrl: String,
+                    topic: String,
+                    caCert: String,
+                    cert: String,
+                    privateKey: String
+                  ): JavaReceiverInputDStream[String] = {
+    implicitly[ClassTag[AnyRef]].asInstanceOf[ClassTag[String]]
+    createStream(jssc.ssc, brokerUrl, topic, caCert, cert, privateKey)
+  }
+
+  /**
+    * Create an input stream that receives messages pushed by a MQTT publisher.
+    *
+    * @param jssc         JavaStreamingContext object
+    * @param brokerUrl    Url of remote MQTT publisher
+    * @param topic        Topic name to subscribe to
+    * @param caCert       Certificate of Certificate Authority of remote MQTT publisher
+    * @param cert         Client certificate associated with the MQTT client
+    * @param privateKey   Private key associated with the MQTT client
+    * @param storageLevel RDD storage level.
+    */
+  def createStream(
+                    jssc: JavaStreamingContext,
+                    brokerUrl: String,
+                    topic: String,
+                    caCert: String,
+                    cert: String,
+                    privateKey: String,
+                    storageLevel: StorageLevel
+                  ): JavaReceiverInputDStream[String] = {
+    implicitly[ClassTag[AnyRef]].asInstanceOf[ClassTag[String]]
+    createStream(jssc.ssc, brokerUrl, topic, caCert, cert, privateKey, storageLevel)
   }
 
   /**
