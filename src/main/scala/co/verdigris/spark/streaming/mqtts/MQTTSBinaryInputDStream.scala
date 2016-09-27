@@ -26,30 +26,30 @@ import org.apache.spark.streaming.dstream.ReceiverInputDStream
 import org.apache.spark.streaming.receiver.Receiver
 
 private[streaming]
-class MQTTSInputDStream(
-                       ssc : StreamingContext,
-                       brokerUrl: String,
-                       topic: String,
-                       caCert: X509Certificate,
-                       cert: X509Certificate,
-                       privateKey: PrivateKey,
-                       storageLevel: StorageLevel
-                       ) extends ReceiverInputDStream[String](ssc) {
-  def getReceiver(): Receiver[String] = {
-    new MQTTSStringReceiver(brokerUrl, topic, caCert, cert, privateKey, storageLevel)
+class MQTTSBinaryInputDStream(
+                         ssc : StreamingContext,
+                         brokerUrl: String,
+                         topic: String,
+                         caCert: X509Certificate,
+                         cert: X509Certificate,
+                         privateKey: PrivateKey,
+                         storageLevel: StorageLevel
+                       ) extends ReceiverInputDStream[Array[Byte]](ssc) {
+  def getReceiver(): Receiver[Array[Byte]] = {
+    new MQTTSBinaryReceiver(brokerUrl, topic, caCert, cert, privateKey, storageLevel)
   }
 }
 
 private[streaming]
-class MQTTSStringReceiver(
-                   brokerUrl: String,
-                   topic: String,
-                   caCert: X509Certificate,
-                   cert: X509Certificate,
-                   privateKey: PrivateKey,
-                   storageLevel: StorageLevel
-                   ) extends MQTTSReceiver[String](brokerUrl, topic, caCert, cert, privateKey, storageLevel) {
+class MQTTSBinaryReceiver(
+                     brokerUrl: String,
+                     topic: String,
+                     caCert: X509Certificate,
+                     cert: X509Certificate,
+                     privateKey: PrivateKey,
+                     storageLevel: StorageLevel
+                   ) extends MQTTSReceiver[Array[Byte]](brokerUrl, topic, caCert, cert, privateKey, storageLevel) {
   def processMessage(payload: Array[Byte]): Unit = {
-    store(new String(payload, "utf-8"))
+    store(payload)
   }
 }
