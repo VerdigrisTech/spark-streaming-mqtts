@@ -33,7 +33,7 @@ import sun.security.provider.X509Factory
 
 object MQTTSUtils {
   /**
-    * Create an input stream that receives messages pushed by a MQTT publisher.
+    * Create an input stream that receives binary messages pushed by a MQTT publisher.
     *
     * @param jssc       JavaStreamingContext object
     * @param brokerUrl  Url of remote MQTT publisher
@@ -55,7 +55,7 @@ object MQTTSUtils {
   }
 
   /**
-    * Create an input stream that receives messages pushed by a MQTT publisher.
+    * Create an input stream that receives binary messages pushed by a MQTT publisher.
     *
     * @param jssc         JavaStreamingContext object
     * @param brokerUrl    Url of remote MQTT publisher
@@ -79,7 +79,7 @@ object MQTTSUtils {
   }
 
   /**
-    * Create an input stream that receives messages pushed by a MQTT publisher.
+    * Create an input stream that receives binary messages pushed by a MQTT publisher.
     *
     * @param ssc          StreamingContext object
     * @param brokerUrl    Url of remote MQTT publisher
@@ -105,7 +105,7 @@ object MQTTSUtils {
   }
 
   /**
-    * Create an input stream that receives messages pushed by a MQTT publisher.
+    * Create an input stream that receives binary messages pushed by a MQTT publisher.
     *
     * @param ssc          StreamingContext object
     * @param brokerUrl    Url of remote MQTT publisher
@@ -133,7 +133,7 @@ object MQTTSUtils {
   }
 
   /**
-    * Create an input stream that receives messages pushed by a MQTT publisher.
+    * Create an input stream that receives binary messages pushed by a MQTT publisher.
     *
     * @param ssc          StreamingContext object
     * @param brokerUrl    Url of remote MQTT publisher
