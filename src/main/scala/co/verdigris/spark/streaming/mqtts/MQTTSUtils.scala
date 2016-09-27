@@ -220,8 +220,6 @@ object MQTTSUtils {
                     privateKey: String
                   ): ReceiverInputDStream[String] = {
     implicitly[ClassTag[AnyRef]].asInstanceOf[ClassTag[String]]
-    val cf = CertificateFactory.getInstance("X.509")
-
     val _caCert = stringToX509Certificate(caCert)
     val _cert = stringToX509Certificate(cert)
     val _privateKey = stringToPrivateKey(privateKey)
@@ -250,8 +248,6 @@ object MQTTSUtils {
                     storageLevel: StorageLevel
                   ): ReceiverInputDStream[String] = {
     implicitly[ClassTag[AnyRef]].asInstanceOf[ClassTag[String]]
-    val cf = CertificateFactory.getInstance("X.509")
-
     val _caCert = stringToX509Certificate(caCert)
     val _cert = stringToX509Certificate(cert)
     val _privateKey = stringToPrivateKey(privateKey)
