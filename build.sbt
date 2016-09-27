@@ -1,6 +1,6 @@
 name := "spark-streaming-mqtts"
 organization := "co.verdigris"
-version := "0.1.0"
+version := "0.2.0"
 scalaVersion := "2.10.6"
 crossScalaVersions := Seq("2.10.6", "2.11.8")
 
