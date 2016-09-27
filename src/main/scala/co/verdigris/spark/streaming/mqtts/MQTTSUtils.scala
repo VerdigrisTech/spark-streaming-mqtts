@@ -33,6 +33,221 @@ import sun.security.provider.X509Factory
 
 object MQTTSUtils {
   /**
+    * Create an input stream that receives binary messages pushed by a MQTT publisher.
+    *
+    * @param jssc       JavaStreamingContext object
+    * @param brokerUrl  Url of remote MQTT publisher
+    * @param topic      Topic name to subscribe to
+    * @param caCert     Certificate of Certificate Authority of remote MQTT publisher
+    * @param cert       Client certificate associated with the MQTT client
+    * @param privateKey :  Private key associated with the MQTT client
+    */
+  def createBinaryStream(
+                          jssc: JavaStreamingContext,
+                          brokerUrl: String,
+                          topic: String,
+                          caCert: String,
+                          cert: String,
+                          privateKey: String
+                        ): JavaReceiverInputDStream[Array[Byte]] = {
+    implicitly[ClassTag[AnyRef]].asInstanceOf[ClassTag[Array[Byte]]]
+    createBinaryStream(jssc.ssc, brokerUrl, topic, caCert, cert, privateKey)
+  }
+
+  /**
+    * Create an input stream that receives binary messages pushed by a MQTT publisher.
+    *
+    * @param jssc         JavaStreamingContext object
+    * @param brokerUrl    Url of remote MQTT publisher
+    * @param topic        Topic name to subscribe to
+    * @param caCert       Certificate of Certificate Authority of remote MQTT publisher
+    * @param cert         Client certificate associated with the MQTT client
+    * @param privateKey   Private key associated with the MQTT client
+    * @param storageLevel RDD storage level.
+    */
+  def createBinaryStream(
+                          jssc: JavaStreamingContext,
+                          brokerUrl: String,
+                          topic: String,
+                          caCert: String,
+                          cert: String,
+                          privateKey: String,
+                          storageLevel: StorageLevel
+                        ): JavaReceiverInputDStream[Array[Byte]] = {
+    implicitly[ClassTag[AnyRef]].asInstanceOf[ClassTag[Array[Byte]]]
+    createBinaryStream(jssc.ssc, brokerUrl, topic, caCert, cert, privateKey, storageLevel)
+  }
+
+  /**
+    * Create an input stream that receives binary messages pushed by a MQTT publisher.
+    *
+    * @param jssc       JavaStreamingContext object
+    * @param brokerUrl  Url of remote MQTT publisher
+    * @param topic      Topic name to subscribe to
+    * @param caCert     Certificate of Certificate Authority of remote MQTT publisher
+    * @param cert       Client certificate associated with the MQTT client
+    * @param privateKey :  Private key associated with the MQTT client
+    */
+  def createBinaryStream(
+                    jssc: JavaStreamingContext,
+                    brokerUrl: String,
+                    topic: String,
+                    caCert: X509Certificate,
+                    cert: X509Certificate,
+                    privateKey: PrivateKey
+                  ): JavaReceiverInputDStream[Array[Byte]] = {
+    implicitly[ClassTag[AnyRef]].asInstanceOf[ClassTag[Array[Byte]]]
+    createBinaryStream(jssc.ssc, brokerUrl, topic, caCert, cert, privateKey)
+  }
+
+  /**
+    * Create an input stream that receives binary messages pushed by a MQTT publisher.
+    *
+    * @param jssc         JavaStreamingContext object
+    * @param brokerUrl    Url of remote MQTT publisher
+    * @param topic        Topic name to subscribe to
+    * @param caCert       Certificate of Certificate Authority of remote MQTT publisher
+    * @param cert         Client certificate associated with the MQTT client
+    * @param privateKey   Private key associated with the MQTT client
+    * @param storageLevel RDD storage level.
+    */
+  def createBinaryStream(
+                    jssc: JavaStreamingContext,
+                    brokerUrl: String,
+                    topic: String,
+                    caCert: X509Certificate,
+                    cert: X509Certificate,
+                    privateKey: PrivateKey,
+                    storageLevel: StorageLevel
+                  ): JavaReceiverInputDStream[Array[Byte]] = {
+    implicitly[ClassTag[AnyRef]].asInstanceOf[ClassTag[Array[Byte]]]
+    createBinaryStream(jssc.ssc, brokerUrl, topic, caCert, cert, privateKey, storageLevel)
+  }
+
+  /**
+    * Create an input stream that receives binary messages pushed by a MQTT publisher.
+    *
+    * @param ssc          StreamingContext object
+    * @param brokerUrl    Url of remote MQTT publisher
+    * @param topic        Topic name to subscribe to
+    * @param caCert       Certificate Authority's certificate in base64 encoded PEM formatted string
+    * @param cert         Client certificate in base64 encoded PEM formatted string
+    * @param privateKey   Private key in PKCS8 formatted string
+    */
+  def createBinaryStream(
+                    ssc: StreamingContext,
+                    brokerUrl: String,
+                    topic: String,
+                    caCert: String,
+                    cert: String,
+                    privateKey: String
+                  ): ReceiverInputDStream[Array[Byte]] = {
+    implicitly[ClassTag[AnyRef]].asInstanceOf[ClassTag[Array[Byte]]]
+    val _caCert = stringToX509Certificate(caCert)
+    val _cert = stringToX509Certificate(cert)
+    val _privateKey = stringToPrivateKey(privateKey)
+
+    createBinaryStream(ssc, brokerUrl, topic, _caCert, _cert, _privateKey)
+  }
+
+  /**
+    * Create an input stream that receives binary messages pushed by a MQTT publisher.
+    *
+    * @param ssc          StreamingContext object
+    * @param brokerUrl    Url of remote MQTT publisher
+    * @param topic        Topic name to subscribe to
+    * @param caCert       Certificate Authority's certificate in base64 encoded PEM formatted string
+    * @param cert         Client certificate in base64 encoded PEM formatted string
+    * @param privateKey   Private key in PKCS8 formatted string
+    * @param storageLevel RDD storage level.
+    */
+  def createBinaryStream(
+                    ssc: StreamingContext,
+                    brokerUrl: String,
+                    topic: String,
+                    caCert: String,
+                    cert: String,
+                    privateKey: String,
+                    storageLevel: StorageLevel
+                  ): ReceiverInputDStream[Array[Byte]] = {
+    implicitly[ClassTag[AnyRef]].asInstanceOf[ClassTag[Array[Byte]]]
+    val _caCert = stringToX509Certificate(caCert)
+    val _cert = stringToX509Certificate(cert)
+    val _privateKey = stringToPrivateKey(privateKey)
+
+    createBinaryStream(ssc, brokerUrl, topic, _caCert, _cert, _privateKey, storageLevel)
+  }
+
+  /**
+    * Create an input stream that receives binary messages pushed by a MQTT publisher.
+    *
+    * @param ssc          StreamingContext object
+    * @param brokerUrl    Url of remote MQTT publisher
+    * @param topic        Topic name to subscribe to
+    * @param caCert       Certificate of Certificate Authority of remote MQTT publisher
+    * @param cert         Client certificate associated with the MQTT client
+    * @param privateKey   Private key associated with the MQTT client
+    * @param storageLevel RDD storage level.
+    */
+  def createBinaryStream(
+                    ssc: StreamingContext,
+                    brokerUrl: String,
+                    topic: String,
+                    caCert: X509Certificate,
+                    cert: X509Certificate,
+                    privateKey: PrivateKey,
+                    storageLevel: StorageLevel = StorageLevel.MEMORY_AND_DISK_SER_2
+                  ): ReceiverInputDStream[Array[Byte]] = {
+    new MQTTSBinaryInputDStream(ssc, brokerUrl, topic, caCert, cert, privateKey, storageLevel)
+  }
+
+  /**
+    * Create an input stream that receives messages pushed by a MQTT publisher.
+    *
+    * @param jssc       JavaStreamingContext object
+    * @param brokerUrl  Url of remote MQTT publisher
+    * @param topic      Topic name to subscribe to
+    * @param caCert     Certificate of Certificate Authority of remote MQTT publisher
+    * @param cert       Client certificate associated with the MQTT client
+    * @param privateKey :  Private key associated with the MQTT client
+    */
+  def createStream(
+                    jssc: JavaStreamingContext,
+                    brokerUrl: String,
+                    topic: String,
+                    caCert: String,
+                    cert: String,
+                    privateKey: String
+                  ): JavaReceiverInputDStream[String] = {
+    implicitly[ClassTag[AnyRef]].asInstanceOf[ClassTag[String]]
+    createStream(jssc.ssc, brokerUrl, topic, caCert, cert, privateKey)
+  }
+
+  /**
+    * Create an input stream that receives messages pushed by a MQTT publisher.
+    *
+    * @param jssc         JavaStreamingContext object
+    * @param brokerUrl    Url of remote MQTT publisher
+    * @param topic        Topic name to subscribe to
+    * @param caCert       Certificate of Certificate Authority of remote MQTT publisher
+    * @param cert         Client certificate associated with the MQTT client
+    * @param privateKey   Private key associated with the MQTT client
+    * @param storageLevel RDD storage level.
+    */
+  def createStream(
+                    jssc: JavaStreamingContext,
+                    brokerUrl: String,
+                    topic: String,
+                    caCert: String,
+                    cert: String,
+                    privateKey: String,
+                    storageLevel: StorageLevel
+                  ): JavaReceiverInputDStream[String] = {
+    implicitly[ClassTag[AnyRef]].asInstanceOf[ClassTag[String]]
+    createStream(jssc.ssc, brokerUrl, topic, caCert, cert, privateKey, storageLevel)
+  }
+
+  /**
     * Create an input stream that receives messages pushed by a MQTT publisher.
     *
     * @param jssc       JavaStreamingContext object
@@ -97,8 +312,6 @@ object MQTTSUtils {
                     privateKey: String
                   ): ReceiverInputDStream[String] = {
     implicitly[ClassTag[AnyRef]].asInstanceOf[ClassTag[String]]
-    val cf = CertificateFactory.getInstance("X.509")
-
     val _caCert = stringToX509Certificate(caCert)
     val _cert = stringToX509Certificate(cert)
     val _privateKey = stringToPrivateKey(privateKey)
@@ -127,8 +340,6 @@ object MQTTSUtils {
                     storageLevel: StorageLevel
                   ): ReceiverInputDStream[String] = {
     implicitly[ClassTag[AnyRef]].asInstanceOf[ClassTag[String]]
-    val cf = CertificateFactory.getInstance("X.509")
-
     val _caCert = stringToX509Certificate(caCert)
     val _cert = stringToX509Certificate(cert)
     val _privateKey = stringToPrivateKey(privateKey)
