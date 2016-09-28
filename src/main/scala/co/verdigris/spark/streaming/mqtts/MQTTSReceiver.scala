@@ -35,51 +35,50 @@ abstract class MQTTSReceiver[T](
                                                  privateKey: PrivateKey,
                                                  storageLevel: StorageLevel
                                                ) extends Receiver[T](storageLevel) {
-  protected val client = new MqttClient(brokerUrl, MqttClient.generateClientId, new MemoryPersistence())
-  protected val connectOptions = new MqttConnectOptions()
-  protected val callback = new MqttCallback() {
-    override def messageArrived(topic: String, message: MqttMessage): Unit = {
-      processMessage(message.getPayload)
-    }
-
-    override def deliveryComplete(iMqttDeliveryToken: IMqttDeliveryToken) {}
-
-    override def connectionLost(cause: Throwable): Unit = {
-      restart("Connection lost ", cause)
-    }
-  }
-  protected val caKeyStore = KeyStore.getInstance(KeyStore.getDefaultType)
-  protected val clientKeyStore = KeyStore.getInstance(KeyStore.getDefaultType)
-  protected val keyManagerFactory = KeyManagerFactory.getInstance(KeyManagerFactory.getDefaultAlgorithm)
-  protected val trustManagerFactory = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm)
-  protected val sslContext = SSLContext.getInstance("TLSv1.2")
-
-
   def processMessage(payload: Array[Byte])
 
   def onStart(): Unit = {
+    val client = new MqttClient(brokerUrl, MqttClient.generateClientId, new MemoryPersistence())
+    val connectOptions = new MqttConnectOptions()
+
     // Store CA certificate in JKS
+    val caKeyStore = KeyStore.getInstance(KeyStore.getDefaultType)
     caKeyStore.load(null, null)
     caKeyStore.setCertificateEntry("ca-certificate", caCert)
 
     // Establish certificate trust chain
+    val trustManagerFactory = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm)
     trustManagerFactory.init(caKeyStore)
 
     // Store client certificate and private key in JKS
+    val clientKeyStore = KeyStore.getInstance(KeyStore.getDefaultType)
     clientKeyStore.load(null, null)
     clientKeyStore.setCertificateEntry("certificate", cert)
     clientKeyStore.setKeyEntry("private-key", privateKey, new Array[Char](0), Array(cert))
 
     // Initialize key manager from the key store
+    val keyManagerFactory = KeyManagerFactory.getInstance(KeyManagerFactory.getDefaultAlgorithm)
     keyManagerFactory.init(clientKeyStore, new Array[Char](0))
 
     // Set up client certificate for connection over TLS 1.2
+    val sslContext = SSLContext.getInstance("TLSv1.2")
     sslContext.init(keyManagerFactory.getKeyManagers, trustManagerFactory.getTrustManagers, null)
 
     // Set connect options to use the TLS enabled socket factory
     connectOptions.setSocketFactory(sslContext.getSocketFactory)
 
     // Set callback for MqttClient. This needs to happen before connecting or subscribing, other message may be lost.
+    val callback = new MqttCallback() {
+      override def messageArrived(topic: String, message: MqttMessage): Unit = {
+        processMessage(message.getPayload)
+      }
+
+      override def deliveryComplete(iMqttDeliveryToken: IMqttDeliveryToken) {}
+
+      override def connectionLost(cause: Throwable): Unit = {
+        restart("Connection lost ", cause)
+      }
+    }
     client.setCallback(callback)
 
     // Connect to MqttBroker
